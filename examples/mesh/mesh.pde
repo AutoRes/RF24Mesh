@@ -13,5 +13,8 @@ void setup()
 
 void loop()
 {
+	l2_tick();
+	l3_tick();
 
+	delay(10000);
 }

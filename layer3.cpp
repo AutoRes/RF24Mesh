@@ -29,7 +29,7 @@ static void l3_forward(msg_t *m)
 		if(hop)
 			l2_send(m, hop);
 		else
-			// node does not exist
+			// TODO: send alert - node does not exist
 			msg_free(m);
 	}
 }
@@ -104,8 +104,12 @@ static void l3_recv_rogm(msg_t *m)
 
 		l3_forward(m);
 
-		if(addr = radio.self_addr)
-			l3_send_ogm();
+		if(addr != radio.self_addr)
+		{
+			l2_del_nb(addr);
+			layer3.nodes[addr].hop = 0;
+		}
+		else l3_send_ogm();
 	}
 }
 
@@ -118,7 +122,6 @@ static void l3_recv_known(msg_t *m)
 
 		if(!layer3.nodes[addr].hop)
 		{
-			// TODO: add to nb
 			layer3.nodes[addr].hop = mh->l2_src;
 
 			l3_forward(m);
@@ -207,12 +210,15 @@ void l3_recv_irq(msg_t *m)
 
 void l3_died(uint8_t addr)
 {
-	// TODO
+	l2_del_nb(addr);
+	layer3.nodes[addr].hop = 0;
+	l3_send_rogm(addr);
 }
 
 void l3_found(uint8_t addr)
 {
-	// TODO
+	l2_add_nb(addr);
+	l3_send_known();
 }
 
 /* -------------------------------------------------------------------------- */

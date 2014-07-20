@@ -76,7 +76,7 @@ static void radio_irq(void)
 	{
 		if(tx_fail)
 		{
-			// TODO: radio.last_dst_addr died
+			l3_died(radio.last_dst_addr);
 		}
 
 		_radio_send();

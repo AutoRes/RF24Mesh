@@ -12,13 +12,14 @@ struct Layer2
 	struct
 	{
 		uint8_t addr;
-#define NODE_TIMEOUT 40
-#define PONG_TIMER   1
+
+#define NODE_MAX_TIMER 40
+#define PONG_MAX_TIMER  1
 		uint8_t timer;
 	} nb[NB_MAX];
 	uint8_t nb_l;
 
-#define HELLO_TIMER 4
+#define HELLO_MAX_TIMER 4
 	uint8_t hello_cnt;
 };
 
@@ -29,5 +30,8 @@ void l2_tick(void);
 
 void l2_send(msg_t *m, uint8_t to);
 void l2_recv_irq(msg_t *m);
+
+void l2_add_nb(uint8_t addr);
+void l2_del_nb(uint8_t addr);
 
 #endif

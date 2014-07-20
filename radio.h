@@ -6,6 +6,7 @@
 #include "queue.h"
 #include "msg.h"
 #include "layer2.h"
+#include "layer3.h"
 
 #define BCAST_ADDR 0xFF
 #define BCAST_PIPE 1

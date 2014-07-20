@@ -74,7 +74,7 @@ void l2_init(void)
 
 void l2_tick(void)
 {
-	if(layer2.hello_cnt == HELLO_TIMER)
+	if(layer2.hello_cnt == HELLO_MAX_TIMER)
 	{
 		l2_send_hello();
 		layer2.hello_cnt = 0;
@@ -83,12 +83,38 @@ void l2_tick(void)
 
 	for(uint8_t i = 0; i < layer2.nb_l; i++)
 	{
-		if(layer2.nb[i].timer == NODE_TIMEOUT)
+		if(layer2.nb[i].timer == NODE_MAX_TIMER)
 			l2_send_ping(layer2.nb[i].addr);
-		else if(layer2.nb[i].timer == NODE_TIMEOUT+PONG_TIMER)
+		else if(layer2.nb[i].timer == NODE_MAX_TIMER+PONG_MAX_TIMER)
 			l3_died(layer2.nb[i].addr);
 
 		layer2.nb[i].timer++;
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+void l2_add_nb(uint8_t addr)
+{
+	if(layer2.nb_l < NB_MAX)
+	{
+		layer2.nb[layer2.nb_l].addr = addr;
+		layer2.nb[layer2.nb_l].timer = 0;
+		layer2.nb_l++;
+	}
+}
+
+void l2_del_nb(uint8_t addr)
+{
+	for(uint8_t i = 0; i < layer2.nb_l; i++)
+	{
+		if(layer2.nb[i].addr == addr)
+		{
+			layer2.nb_l--;
+			layer2.nb[i].addr = layer2.nb[layer2.nb_l].addr;
+			layer2.nb[i].timer = layer2.nb[layer2.nb_l].timer;
+			return;
+		}
 	}
 }
 
