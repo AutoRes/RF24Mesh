@@ -5,7 +5,7 @@
 
 Radio radio;
 
-static uint8_t addr2pipe(uint8_t addr)
+static uint64_t addr2pipe(uint8_t addr)
 {
 	return 0xC2C2C2C200LL | addr;
 }
