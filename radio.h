@@ -6,6 +6,7 @@
 #include "msg.h"
 #include "queue.h"
 
+#define BCAST_ADDR 0xFF
 #define BCAST_PIPE 1
 #define SELF_PIPE  2
 
@@ -14,9 +15,9 @@
 
 #define MAX_TX_PENDING 3
 
-#define DEFAULT_BCAST_ADDR 0xFF
-#define DEFAULT_CEPIN      9
-#define DEFAULT_CSPIN      10
+#define DEFAULT_IRQ_N 0
+#define DEFAULT_CEPIN 9
+#define DEFAULT_CSPIN 10
 
 typedef struct
 {
@@ -24,7 +25,6 @@ typedef struct
 	bool listening;
 	// TODO: sending timeout
 
-	uint8_t bcast_addr;
 	uint8_t self_addr;
 	uint8_t last_dst_addr;
 
@@ -34,7 +34,7 @@ typedef struct
 
 extern Radio radio;
 
-void radio_init(uint8_t self_addr, uint8_t bcast_addr = DEFAULT_BCAST_ADDR,
+void radio_init(uint8_t self_addr, uint8_t irq_n = DEFAULT_IRQ_N,
 	uint8_t cepin = DEFAULT_CEPIN, uint8_t cspin = DEFAULT_CSPIN);
 
 

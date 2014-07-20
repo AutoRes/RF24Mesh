@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include "queue.h"
 
-struct msg_t{
+struct msg_t
+{
 	queue_entry entry;
 
 	uint8_t dst;
@@ -12,15 +13,21 @@ struct msg_t{
 	uint8_t pl[];
 };
 
-#define MSG_HELLO
-#define MSG_PING
-#define MSG_OGM
-#define MSG_ROGM
-#define MSG_KNOWN
-#define MSG_PL_BROADCAST
-#define MSG_PL_MULTICAST
-#define MSG_PL
-struct msg_mesh_t {
+enum
+{
+	MSG_L2_HELLO,
+	MSG_L2_PING,
+	MSG_L2_PONG,
+	MSG_L3_OGM,
+	MSG_L3_ROGM,
+	MSG_L3_KNOWN,
+	MSG_PL_BROADCAST,
+	MSG_PL_MULTICAST,
+	MSG_PL
+};
+
+struct msg_header_t
+{
 	uint8_t l2_src; // 1
 	uint8_t l3_src; // 2
 	uint8_t l3_dst; // 3
@@ -31,8 +38,12 @@ struct msg_mesh_t {
 	uint8_t pl[];
 };
 
-msg_t *msg_new(uint8_t len);
+msg_t *msg_new(uint8_t len, bool raw = false);
+msg_t *msg_dup(msg_t *m);
 void   msg_free(msg_t *m);
+
+msg_header_t *msg_get_header(msg_t *m);
+uint8_t      *msg_get_pl    (msg_t *m);
 
 #undef T
 #endif /* MSG_H */

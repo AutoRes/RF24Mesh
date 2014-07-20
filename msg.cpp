@@ -1,27 +1,46 @@
 #include "msg.h"
 #include <stdlib.h>
+#include <string.h>
 
-// size_t msg_sizeof(int layers)
-// {
-// 	size_t total = 0;
-// 
-// 	switch (layers) { /* using fall-through. */
-// 	case 3: total += sizeof(l3msg_t);
-// 	case 2: total += sizeof(l2msg_t);
-// 	default:
-// 		return total;
-// 	}
-// }
-
-msg_t *msg_new(uint8_t len)
+// TODO: circular buffer to avoid alloc overhead
+msg_t *msg_new(uint8_t len, bool raw)
 {
-	msg_t *m = (msg_t*)malloc(sizeof(msg_t)+len);
+	uint8_t size = len;
+	size += sizeof(msg_t);
+	if(!raw)
+		size += sizeof(msg_header_t);
+
+	msg_t *m = (msg_t*)malloc(size);
 	queue_entry_init((queue_entry*)m);
-	m->len = len;
+	m->len = size-sizeof(msg_t);
 	return m;
+}
+
+msg_t *msg_dup(msg_t *m)
+{
+	// TODO: ref count
+	msg_t *md = msg_new(m->len, true);
+
+	msg_header_t *mh = msg_get_header(m);
+	msg_header_t *mdh = msg_get_header(md);
+
+	memcpy(mdh, mh, m->len);
+	return md;
 }
 
 void msg_free(msg_t *m)
 {
 	free(m);
+}
+
+msg_header_t *msg_get_header(msg_t *m)
+{
+	if(!m) return NULL;
+	return (msg_header_t*)m->pl;
+}
+
+uint8_t *msg_get_pl(msg_t *m)
+{
+	if(!m) return NULL;
+	return msg_get_header(m)->pl;
 }

@@ -13,7 +13,7 @@ static uint64_t addr2pipe(uint8_t addr)
 
 static void adjust_acks()
 {
-	radio.rf24->openReadingPipe(BCAST_PIPE, addr2pipe(radio.bcast_addr));
+	radio.rf24->openReadingPipe(BCAST_PIPE, addr2pipe(BCAST_ADDR));
 	radio.rf24->openReadingPipe(SELF_PIPE, addr2pipe(radio.self_addr));
 }
 
@@ -26,7 +26,7 @@ static void _radio_send(void)
 		radio.listening = false;
 		radio.rf24->stopListening();
 
-		if(radio.bcast_addr == m->dst)
+		if(m->dst == BCAST_ADDR)
 			radio.rf24->setAutoAck(false);
 		else
 			radio.rf24->setAutoAck(true);
@@ -53,12 +53,12 @@ static void _radio_recv(void)
 	if(radio.rf24->available(&pipe))
 	{
 		uint8_t len = radio.rf24->getDynamicPayloadSize();
-		m = msg_new(len);
+		m = msg_new(len, true);
 
 		if(pipe == SELF_PIPE)
 			m->dst = radio.self_addr;
 		else
-			m->dst = radio.bcast_addr;
+			m->dst = BCAST_ADDR;
 
 		radio.rf24->read(m->pl, m->len);
 		queue_put((queue_entry*)m, &radio.rx);
@@ -67,17 +67,15 @@ static void _radio_recv(void)
 
 /* -------------------------------------------------------------------------- */
 
-void radio_init(uint8_t self_addr, uint8_t bcast_addr,
-	uint8_t cepin, uint8_t cspin)
+void radio_init(uint8_t self_addr, uint8_t irq_n, uint8_t cepin, uint8_t cspin)
 {
 	radio.rf24 = new RF24(cepin, cspin);
-	attachInterrupt(0, radio_irq, FALLING);
+	attachInterrupt(irq_n, radio_irq, FALLING);
 
 	radio.rf24->begin();
 	radio.rf24->setRetries(RETRY_DELAY, RETRY_MAX);
 	radio.rf24->enableDynamicPayloads();
 
-	radio.bcast_addr = bcast_addr;
 	radio.self_addr = self_addr;
 	adjust_acks();
 	
@@ -90,7 +88,7 @@ void radio_init(uint8_t self_addr, uint8_t bcast_addr,
 
 void radio_send(msg_t *m)
 {
-	queue_put((queue_entry*)m, &radio.tx);	
+	queue_put((queue_entry*)m, &radio.tx);
 	if(radio.listening)
 		_radio_send();
 }
