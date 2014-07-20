@@ -22,6 +22,6 @@ bool radio_send(bool bcast, uint8_t addr,
 	uint8_t pl[], uint8_t len);
 
 
-uint8_t radio_recv(uint8_t *pl[]);
+uint8_t *radio_recv(uint8_t *_len);
 
 #endif

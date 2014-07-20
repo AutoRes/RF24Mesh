@@ -48,16 +48,17 @@ bool radio_send(bool bcast, uint8_t addr,
 	radio.rf24->startListening();
 }
 
-uint8_t radio_recv(uint8_t *pl[])
+uint8_t *radio_recv(uint8_t *_len)
 {
+	uint8_t *pl = NULL;
+
 	if(radio.rf24->available())
 	{
 		uint8_t len = radio.rf24->getDynamicPayloadSize();
-		*pl = (uint8_t*)malloc(sizeof(uint8_t)*len);
-
-		radio.rf24->read(*pl, len);
-		return len;
+		pl = (uint8_t*)malloc(sizeof(uint8_t)*len);
+		radio.rf24->read(pl, len);
+		if (_len) *_len = len;
 	}
 
-	return 0;
+	return pl;
 }
