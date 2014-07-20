@@ -1,4 +1,3 @@
-
 #include "radio.h"
 
 #define BCAST_PIPE_N 1
@@ -54,11 +53,11 @@ uint8_t radio_recv(uint8_t *pl[])
 	if(radio.rf24->available())
 	{
 		uint8_t len = radio.rf24->getDynamicPayloadSize();
-		uint8_t *pl = (uint8_t*)malloc(sizeof(uint8_t)*len);
+		*pl = (uint8_t*)malloc(sizeof(uint8_t)*len);
 
-		radio.rf24->read(*(void**)pl, len);
+		radio.rf24->read(*pl, len);
 		return len;
 	}
 
-	return NULL;
+	return 0;
 }
