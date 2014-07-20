@@ -64,7 +64,7 @@ static void _radio_recv(void)
 		queue_put((queue_entry*)m, &radio.rx);
 	}
 
-	mesh_l2_recv_irq();
+	l2_recv_irq(m);
 }
 
 static void radio_irq(void)
@@ -112,11 +112,6 @@ void radio_send(msg_t *m)
 	queue_put((queue_entry*)m, &radio.tx);
 	if(radio.listening)
 		_radio_send();
-}
-
-msg_t* radio_recv(void)
-{
-	queue_get(&radio.rx);
 }
 
 /* -------------------------------------------------------------------------- */

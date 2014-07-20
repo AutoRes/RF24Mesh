@@ -3,20 +3,15 @@
 #include "radio.h"
 #include "msg.h"
 
-void setup() {
+void setup()
+{
 	// same pins as RF24 library.
 	radio_init(0x01);
+	l2_init();
+	l3_init();
 }
 
-void loop() {
-	msg_t *ptr;
+void loop()
+{
 
-	if ((ptr = radio_recv()) != NULL) {
-		msg_t *m = msg_new(1);
-		m->pl[0]= 10;
-		m->dst = 0x02;
-
-		radio_send(m);
-		free(ptr);
-	}
 }

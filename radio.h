@@ -3,9 +3,9 @@
 
 #include "nRF24L01.h"
 #include "RF24.h"
-#include "msg.h"
 #include "queue.h"
-#include "mesh.h"
+#include "msg.h"
+#include "layer2.h"
 
 #define BCAST_ADDR 0xFF
 #define BCAST_PIPE 1
@@ -20,7 +20,7 @@
 #define DEFAULT_CEPIN 9
 #define DEFAULT_CSPIN 10
 
-typedef struct
+struct Radio
 {
 	RF24 *rf24;
 	bool listening;
@@ -31,7 +31,7 @@ typedef struct
 
 	queue_head tx;
 	queue_head rx;
-} Radio;
+};
 
 extern Radio radio;
 
@@ -40,7 +40,5 @@ void radio_init(uint8_t self_addr, uint8_t irq_n = DEFAULT_IRQ_N,
 
 
 void radio_send(msg_t *m);
-
-msg_t* radio_recv(void);
 
 #endif
