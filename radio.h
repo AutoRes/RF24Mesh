@@ -31,7 +31,6 @@ struct Radio
 	uint8_t last_dst_addr;
 
 	queue_head tx;
-	queue_head rx;
 };
 
 extern Radio radio;

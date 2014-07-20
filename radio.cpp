@@ -61,10 +61,9 @@ static void _radio_recv(void)
 			m->dst = BCAST_ADDR;
 
 		radio.rf24->read(m->pl, m->len);
-		queue_put((queue_entry*)m, &radio.rx);
+		l2_recv_irq(m);
 	}
 
-	l2_recv_irq(m);
 }
 
 static void radio_irq(void)
@@ -104,7 +103,6 @@ void radio_init(uint8_t self_addr, uint8_t irq_n, uint8_t cepin, uint8_t cspin)
 	radio.listening = true;
 
 	queue_head_init(&radio.tx);
-	queue_head_init(&radio.rx);
 }
 
 void radio_send(msg_t *m)
