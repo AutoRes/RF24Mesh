@@ -1,20 +1,24 @@
 #include "SPI.h"
 #include "RF24.h"
 #include "radio.h"
+#include "msg.h"
 
 void setup() {
-  // same pins as RF24 library.
-  radio_init(9, 10, 0xFF, 0x01);
+	// same pins as RF24 library.
+	radio_init(0x01);
 
+	attachInterrupt(0, radio_irq, FALLING);
 }
 
 void loop() {
-  uint8_t *ptr;
+	msg_t *ptr;
 
-  if ((ptr = radio_recv(NULL)) != NULL) {
-    char *s = "hello world";
-    bool ok = radio_send(false, 0x02, (uint8_t *)s, sizeof(s));
-    free(ptr);
-  }
+	if ((ptr = radio_recv()) != NULL) {
+		msg_t *m = msg_new(1);
+		m->pl[0]= 10;
+		m->dst = 0x02;
 
+		radio_send(m);
+		free(ptr);
+	}
 }

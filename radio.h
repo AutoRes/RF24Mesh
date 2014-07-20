@@ -3,25 +3,45 @@
 
 #include "nRF24L01.h"
 #include "RF24.h"
+#include "msg.h"
+#include "queue.h"
+
+#define BCAST_PIPE 1
+#define SELF_PIPE  2
+
+#define RETRY_DELAY 4
+#define RETRY_MAX   15
+
+#define MAX_TX_PENDING 3
+
+#define DEFAULT_BCAST_ADDR 0xFF
+#define DEFAULT_CEPIN      9
+#define DEFAULT_CSPIN      10
 
 typedef struct
 {
 	RF24 *rf24;
+	bool listening;
+	// TODO: sending timeout
 
 	uint8_t bcast_addr;
 	uint8_t self_addr;
+	uint8_t last_dst_addr;
+
+	queue_head tx;
+	queue_head rx;
 } Radio;
 
 extern Radio radio;
 
-void radio_init(uint8_t _cepin, uint8_t _cspin,
-	uint8_t bcast_addr, uint8_t self_addr);
+void radio_init(uint8_t self_addr, uint8_t bcast_addr = DEFAULT_BCAST_ADDR,
+	uint8_t cepin = DEFAULT_CEPIN, uint8_t cspin = DEFAULT_CSPIN);
 
 
-bool radio_send(bool bcast, uint8_t addr,
-	uint8_t pl[], uint8_t len);
+void radio_send(msg_t *m);
 
+msg_t* radio_recv(void);
 
-uint8_t *radio_recv(uint8_t *_len);
+void radio_irq(void);
 
 #endif
