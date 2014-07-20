@@ -134,7 +134,7 @@ static void l3_recv_broadcast(msg_t *m)
 {
 	if(l3_recv_broadcast_pre(m))
 	{
-		// TODO: send to app
+		mesh_recv_irq(m);
 		l3_forward(msg_dup(m));
 	}
 }
@@ -143,7 +143,6 @@ static void l3_recv_broadcast(msg_t *m)
 
 void l3_init(void)
 {
-	// TODO: attach timer interrupt
 }
 
 void l3_tick(void)
@@ -197,7 +196,7 @@ void l3_recv_irq(msg_t *m)
 
 		case MSG_PL_MULTICAST:
 		case MSG_PL:
-			// TODO: send to app
+			mesh_recv_irq(m);
 			break;
 
 		default: // hello; pong;

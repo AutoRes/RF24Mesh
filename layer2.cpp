@@ -69,7 +69,6 @@ static void l2_recv_ping(msg_t *m)
 
 void l2_init(void)
 {
-	// TODO: attach timer interrupt
 }
 
 void l2_tick(void)

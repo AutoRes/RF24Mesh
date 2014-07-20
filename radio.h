@@ -38,7 +38,6 @@ extern Radio radio;
 void radio_init(uint8_t self_addr, uint8_t irq_n = DEFAULT_IRQ_N,
 	uint8_t cepin = DEFAULT_CEPIN, uint8_t cspin = DEFAULT_CSPIN);
 
-
 void radio_send(msg_t *m);
 
 #endif
