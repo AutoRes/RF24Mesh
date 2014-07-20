@@ -63,6 +63,27 @@ static void _radio_recv(void)
 		radio.rf24->read(m->pl, m->len);
 		queue_put((queue_entry*)m, &radio.rx);
 	}
+
+	mesh_l2_recv_irq();
+}
+
+static void radio_irq(void)
+{
+	bool tx_ok, tx_fail, rx_ready;
+	radio.rf24->whatHappened(tx_ok, tx_fail, rx_ready);
+
+	if(tx_ok || tx_fail)
+	{
+		if(tx_fail)
+		{
+			// TODO: radio.last_dst_addr died
+		}
+
+		_radio_send();
+	}
+
+	if(rx_ready)
+		_radio_recv();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -96,27 +117,6 @@ void radio_send(msg_t *m)
 msg_t* radio_recv(void)
 {
 	queue_get(&radio.rx);
-}
-
-void radio_irq(void)
-{
-	bool tx_ok, tx_fail, rx_ready;
-	radio.rf24->whatHappened(tx_ok, tx_fail, rx_ready);
-
-	if(tx_ok || tx_fail)
-	{
-		if(tx_fail)
-		{
-			// TODO: radio.dst_addr died
-		}
-
-		_radio_send();
-	}
-
-	if(rx_ready)
-	{
-		_radio_recv();
-	}
 }
 
 /* -------------------------------------------------------------------------- */

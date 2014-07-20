@@ -33,18 +33,15 @@ typedef struct
 
 extern Mesh mesh;
 
+void mesh_init(void);
 void mesh_tick(void);
 
 void mesh_l2_send(msg_t *m, uint8_t to);
-void mesh_l2_send_hello(void);
-void mesh_l2_send_ping(uint8_t to);
 void mesh_l3_send(msg_t *m, uint8_t to);
-void mesh_l3_send_ogm(void);
-void mesh_l3_send_rogm(uint8_t to);
-void mesh_l3_send_known(void);
 
-// TODO
-void mesh_node_died(uint8_t to);
-void mesh_node_found(uint8_t to);
+void mesh_l2_recv_irq(void);
+
+void mesh_node_died(uint8_t addr);
+void mesh_node_found(uint8_t addr);
 
 #endif

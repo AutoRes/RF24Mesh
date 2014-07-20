@@ -5,6 +5,7 @@
 #include "RF24.h"
 #include "msg.h"
 #include "queue.h"
+#include "mesh.h"
 
 #define BCAST_ADDR 0xFF
 #define BCAST_PIPE 1
@@ -41,7 +42,5 @@ void radio_init(uint8_t self_addr, uint8_t irq_n = DEFAULT_IRQ_N,
 void radio_send(msg_t *m);
 
 msg_t* radio_recv(void);
-
-void radio_irq(void);
 
 #endif
