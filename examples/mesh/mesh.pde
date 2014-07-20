@@ -6,15 +6,12 @@
 void setup()
 {
 	// same pins as RF24 library.
-	radio_init(0x01);
-	l2_init();
-	l3_init();
+	mesh_init(0x02);
 }
 
 void loop()
 {
-	l2_tick();
-	l3_tick();
+	mesh_tick();
 
 	delay(10000);
 }

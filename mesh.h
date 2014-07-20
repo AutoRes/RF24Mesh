@@ -14,7 +14,7 @@ struct Mesh
 
 extern Mesh mesh;
 
-void mesh_init(void);
+void mesh_init(uint8_t self_addr);
 void mesh_tick(void);
 
 void mesh_send(msg_t *m, uint8_t to, uint8_t type);
