@@ -6,8 +6,6 @@
 void setup() {
 	// same pins as RF24 library.
 	radio_init(0x01);
-
-	attachInterrupt(0, radio_irq, FALLING);
 }
 
 void loop() {

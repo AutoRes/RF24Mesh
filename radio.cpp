@@ -71,6 +71,7 @@ void radio_init(uint8_t self_addr, uint8_t bcast_addr,
 	uint8_t cepin, uint8_t cspin)
 {
 	radio.rf24 = new RF24(cepin, cspin);
+	attachInterrupt(0, radio_irq, FALLING);
 
 	radio.rf24->begin();
 	radio.rf24->setRetries(RETRY_DELAY, RETRY_MAX);
