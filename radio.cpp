@@ -11,10 +11,13 @@ static uint64_t addr2pipe(uint8_t addr)
 	return 0xC2C2C2C200LL | addr;
 }
 
-static void adjust_acks()
+static void adjust_pipes()
 {
 	radio.rf24->openReadingPipe(BCAST_PIPE, addr2pipe(BCAST_ADDR));
 	radio.rf24->openReadingPipe(SELF_PIPE, addr2pipe(radio.self_addr));
+
+	radio.rf24->setAutoAck(BCAST_PIPE, false);
+	radio.rf24->setAutoAck(SELF_PIPE, true);
 }
 
 static void _radio_send(void)
@@ -39,7 +42,7 @@ static void _radio_send(void)
 	}
 	else
 	{
-		adjust_acks();
+		adjust_pipes();
 		radio.rf24->startListening();
 		radio.listening = true;
 	}
@@ -97,7 +100,7 @@ void radio_init(uint8_t self_addr, uint8_t irq_n, uint8_t cepin, uint8_t cspin)
 	radio.rf24->enableDynamicPayloads();
 
 	radio.self_addr = self_addr;
-	adjust_acks();
+	adjust_pipes();
 	
 	radio.rf24->startListening();
 	radio.listening = true;
