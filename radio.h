@@ -9,8 +9,8 @@
 #include "layer3.h"
 
 #define BCAST_ADDR 0xFF
-#define BCAST_PIPE 1
-#define SELF_PIPE  2
+#define BCAST_PIPE 2
+#define SELF_PIPE  1
 
 #define RETRY_DELAY 4
 #define RETRY_MAX   15

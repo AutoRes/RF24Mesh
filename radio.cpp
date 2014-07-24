@@ -51,22 +51,18 @@ static void _radio_send(void)
 static void _radio_recv(void)
 {
 	msg_t *m;
-	uint8_t pipe;
+	uint8_t pipe; //TODO
 
-	if(radio.rf24->available(&pipe))
-	{
-		uint8_t len = radio.rf24->getDynamicPayloadSize();
-		m = msg_new(len, true);
+	uint8_t len = radio.rf24->getDynamicPayloadSize();
+	m = msg_new(len, true);
 
-		if(pipe == SELF_PIPE)
-			m->dst = radio.self_addr;
-		else
-			m->dst = BCAST_ADDR;
+	if(pipe == SELF_PIPE)
+		m->dst = radio.self_addr;
+	else
+		m->dst = BCAST_ADDR;
 
-		radio.rf24->read(m->pl, m->len);
-		l2_recv_irq(m);
-	}
-
+	radio.rf24->read(m->pl, m->len);
+	l2_recv_irq(m);
 }
 
 static void radio_irq(void)
@@ -85,7 +81,9 @@ static void radio_irq(void)
 	}
 
 	if(rx_ready)
+	{
 		_radio_recv();
+	}
 }
 
 /* -------------------------------------------------------------------------- */
