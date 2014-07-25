@@ -209,14 +209,12 @@ void l3_recv_irq(msg_t *m)
 
 void l3_died(uint8_t addr)
 {
-	l2_del_nb(addr);
 	layer3.nodes[addr].hop = 0;
 	l3_send_rogm(addr);
 }
 
 void l3_found(uint8_t addr)
 {
-	l2_add_nb(addr);
 	l3_send_known();
 }
 

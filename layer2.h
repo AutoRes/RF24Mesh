@@ -34,4 +34,6 @@ void l2_recv_irq(msg_t *m);
 void l2_add_nb(uint8_t addr);
 void l2_del_nb(uint8_t addr);
 
+void l2_on_send_failure(uint8_t addr);
+
 #endif

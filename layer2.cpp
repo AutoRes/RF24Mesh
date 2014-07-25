@@ -51,6 +51,7 @@ static void l2_recv_pre(uint8_t addr)
 	}
 	if(i == layer2.nb_l)
 	{
+		l2_add_nb(addr);
 		l3_found(addr);
 	}
 
@@ -118,6 +119,12 @@ void l2_del_nb(uint8_t addr)
 }
 
 /* -------------------------------------------------------------------------- */
+
+void l2_on_send_failure(uint8_t addr)
+{
+	l2_del_nb(addr);
+	l3_died(addr);
+}
 
 void l2_send(msg_t *m, uint8_t to)
 {

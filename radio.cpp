@@ -77,7 +77,7 @@ static void radio_irq(void)
 	{
 		if(tx_fail)
 		{
-			l3_died(radio.last_dst_addr);
+			l2_on_send_failure(radio.last_dst_addr);
 		}
 
 		_radio_send();
