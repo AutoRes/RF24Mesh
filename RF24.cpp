@@ -1,10 +1,10 @@
 /*
- Copyright (C) 2011 J. Coliz <maniacbug@ymail.com>
+   Copyright (C) 2011 J. Coliz <maniacbug@ymail.com>
 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- version 2 as published by the Free Software Foundation.
- */
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public License
+   version 2 as published by the Free Software Foundation.
+   */
 
 #include "nRF24L01.h"
 #include "RF24_config.h"
@@ -103,9 +103,9 @@ uint8_t RF24::write_payload(const void* buf, uint8_t len)
 
   uint8_t data_len = min(len,payload_size);
   uint8_t blank_len = dynamic_payloads_enabled ? 0 : payload_size - data_len;
-  
+
   //printf("[Writing %u bytes %u blanks]",data_len,blank_len);
-  
+
   csn(LOW);
   status = SPI.transfer( W_TX_PAYLOAD );
   while ( data_len-- )
@@ -126,9 +126,9 @@ uint8_t RF24::read_payload(void* buf, uint8_t len)
 
   uint8_t data_len = min(len,payload_size);
   uint8_t blank_len = dynamic_payloads_enabled ? 0 : payload_size - data_len;
-  
+
   //printf("[Reading %u bytes %u blanks]",data_len,blank_len);
-  
+
   csn(LOW);
   status = SPI.transfer( R_RX_PAYLOAD );
   while ( data_len-- )
@@ -184,13 +184,13 @@ uint8_t RF24::get_status(void)
 void RF24::print_status(uint8_t status)
 {
   printf_P(PSTR("STATUS\t\t = 0x%02x RX_DR=%x TX_DS=%x MAX_RT=%x RX_P_NO=%x TX_FULL=%x\r\n"),
-           status,
-           (status & _BV(RX_DR))?1:0,
-           (status & _BV(TX_DS))?1:0,
-           (status & _BV(MAX_RT))?1:0,
-           ((status >> RX_P_NO) & B111),
-           (status & _BV(TX_FULL))?1:0
-          );
+      status,
+      (status & _BV(RX_DR))?1:0,
+      (status & _BV(TX_DS))?1:0,
+      (status & _BV(MAX_RT))?1:0,
+      ((status >> RX_P_NO) & B111),
+      (status & _BV(TX_FULL))?1:0
+      );
 }
 
 /****************************************************************************/
@@ -198,10 +198,10 @@ void RF24::print_status(uint8_t status)
 void RF24::print_observe_tx(uint8_t value)
 {
   printf_P(PSTR("OBSERVE_TX=%02x: POLS_CNT=%x ARC_CNT=%x\r\n"),
-           value,
-           (value >> PLOS_CNT) & B1111,
-           (value >> ARC_CNT) & B1111
-          );
+      value,
+      (value >> PLOS_CNT) & B1111,
+      (value >> ARC_CNT) & B1111
+      );
 }
 
 /****************************************************************************/
@@ -366,14 +366,14 @@ void RF24::begin(void)
   {
     p_variant = true ;
   }
-  
+
   // Then set the data rate to the slowest (and most reliable) speed supported by all
   // hardware.
   setDataRate( RF24_1MBPS ) ;
 
   // Initialize CRC and request 2-byte (16bit) CRC
   setCRCLength( RF24_CRC_16 ) ;
-  
+
   // Disable dynamic payloads, to match dynamic_payloads_enabled setting
   write_register(DYNPD,0);
 
@@ -478,7 +478,7 @@ bool RF24::write( const void* buf, uint8_t len )
   // * There is an ack packet waiting (RX_DR)
   bool tx_ok, tx_fail;
   whatHappened(tx_ok,tx_fail,ack_payload_available);
-  
+
   //printf("%u%u%u\r\n",tx_ok,tx_fail,ack_payload_available);
 
   result = tx_ok;
@@ -544,34 +544,12 @@ bool RF24::available(void)
 
 bool RF24::available(uint8_t* pipe_num)
 {
-  uint8_t status = get_status();
+  uint8_t pipe = ( get_status() >> RX_P_NO ) & B111;
 
-  // Too noisy, enable if you really want lots o data!!
-  //IF_SERIAL_DEBUG(print_status(status));
+  if ( pipe_num )
+    *pipe_num = pipe;
 
-  bool result = ( status & _BV(RX_DR) );
-
-  if (result)
-  {
-    // If the caller wants the pipe number, include that
-    if ( pipe_num )
-      *pipe_num = ( status >> RX_P_NO ) & B111;
-
-    // Clear the status bit
-
-    // ??? Should this REALLY be cleared now?  Or wait until we
-    // actually READ the payload?
-
-    write_register(STATUS,_BV(RX_DR) );
-
-    // Handle ack payload receipt
-    if ( status & _BV(TX_DS) )
-    {
-      write_register(STATUS,_BV(TX_DS));
-    }
-  }
-
-  return result;
+  return pipe != 7;
 }
 
 /****************************************************************************/
@@ -905,7 +883,7 @@ rf24_datarate_e RF24::getDataRate( void )
 {
   rf24_datarate_e result ;
   uint8_t dr = read_register(RF_SETUP) & (_BV(RF_DR_LOW) | _BV(RF_DR_HIGH));
-  
+
   // switch uses RAM (evil!)
   // Order matters in our case below
   if ( dr == _BV(RF_DR_LOW) )
@@ -931,7 +909,7 @@ rf24_datarate_e RF24::getDataRate( void )
 void RF24::setCRCLength(rf24_crclength_e length)
 {
   uint8_t config = read_register(CONFIG) & ~( _BV(CRCO) | _BV(EN_CRC)) ;
-  
+
   // switch uses RAM (evil!)
   if ( length == RF24_CRC_DISABLED )
   {
@@ -978,7 +956,7 @@ void RF24::disableCRC( void )
 /****************************************************************************/
 void RF24::setRetries(uint8_t delay, uint8_t count)
 {
- write_register(SETUP_RETR,(delay&0xf)<<ARD | (count&0xf)<<ARC);
+  write_register(SETUP_RETR,(delay&0xf)<<ARD | (count&0xf)<<ARC);
 }
 
 // vim:ai:cin:sts=2 sw=2 ft=cpp

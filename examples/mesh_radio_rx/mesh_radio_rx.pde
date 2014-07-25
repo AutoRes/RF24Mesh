@@ -6,7 +6,9 @@
 
 void l2_recv_irq(msg_t *m)
 {
-	Serial.println(m->pl[0], HEX);
+	Serial.print(m->pl[0], HEX);
+	Serial.print(" - ");
+	Serial.println(m->dst, HEX);
 	free(m);
 }
 
