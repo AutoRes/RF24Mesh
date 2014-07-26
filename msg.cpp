@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// TODO: circular buffer to avoid alloc overhead
 msg_t *msg_new(uint8_t len, bool raw)
 {
 	uint8_t size = len;
@@ -35,12 +34,10 @@ void msg_free(msg_t *m)
 
 msg_header_t *msg_get_header(msg_t *m)
 {
-	if(!m) return NULL;
 	return (msg_header_t*)m->pl;
 }
 
 uint8_t *msg_get_pl(msg_t *m)
 {
-	if(!m) return NULL;
 	return msg_get_header(m)->pl;
 }

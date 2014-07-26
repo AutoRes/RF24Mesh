@@ -54,9 +54,6 @@ static void l2_recv_pre(uint8_t addr)
 		l2_add_nb(addr);
 		l3_found(addr);
 	}
-
-	// optimization
-	layer3.nodes[addr].hop = addr;
 }
 
 static void l2_recv_ping(msg_t *m)
@@ -84,9 +81,14 @@ void l2_tick(void)
 	for(uint8_t i = 0; i < layer2.nb_l; i++)
 	{
 		if(layer2.nb[i].timer == NODE_MAX_TIMER)
+		{
 			l2_send_ping(layer2.nb[i].addr);
+		}
 		else if(layer2.nb[i].timer == NODE_MAX_TIMER+PONG_MAX_TIMER)
+		{
+			l2_del_nb(layer2.nb[i].addr);
 			l3_died(layer2.nb[i].addr);
+		}
 
 		layer2.nb[i].timer++;
 	}
@@ -139,7 +141,6 @@ void l2_recv_irq(msg_t *m)
 {
 	msg_header_t *mh = msg_get_header(m);
 
-	// optimization
 	l2_recv_pre(mh->l2_src);
 
 	switch(mh->type)
