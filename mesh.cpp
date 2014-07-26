@@ -1,4 +1,5 @@
 #include "mesh.h"
+#include "TimerOne.h"
 
 Mesh mesh;
 
@@ -10,7 +11,9 @@ void mesh_init(uint8_t self_addr)
 
 	queue_head_init(&mesh.rx);
 
-	// TODO: attach timer interrupt
+#define TICK_uS 50000
+	Timer1.initialize(TICK_uS);
+	Timer1.attachInterrupt(mesh_tick);
 }
 
 void mesh_tick(void)
@@ -32,7 +35,7 @@ void mesh_send(msg_t *m, uint8_t to, uint8_t type)
 	l3_send(m, to);
 }
 
-void _mesh_recv_irq(msg_t *m)
+void mesh_recv_irq(msg_t *m)
 {
 	queue_put((queue_entry*)m,&mesh.rx);
 	// TODO: notify app layer
