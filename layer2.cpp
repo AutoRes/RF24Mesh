@@ -67,6 +67,9 @@ static void l2_recv_ping(msg_t *m)
 
 void l2_init(void)
 {
+#define TICK_uS 50000
+	Timer1.initialize(TICK_uS);
+	Timer1.attachInterrupt(l2_tick);
 }
 
 void l2_tick(void)
