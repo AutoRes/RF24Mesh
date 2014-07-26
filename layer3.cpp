@@ -199,7 +199,7 @@ void l3_recv_irq(msg_t *m)
 			mesh_recv_irq(m);
 			break;
 
-		default: // hello; pong;
+		default:
 			msg_free(m);
 			break;
 	}

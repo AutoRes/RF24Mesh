@@ -14,7 +14,6 @@ struct Layer2
 		uint8_t addr;
 
 #define NODE_MAX_TIMER 20
-#define PONG_MAX_TIMER  1
 		uint8_t timer;
 	} nb[NB_MAX];
 	uint8_t nb_l;

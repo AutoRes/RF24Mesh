@@ -1,6 +1,7 @@
 /* -------------------------------------------------------------------------- */
 
 #include "layer2.h"
+#include "TimerOne.h"
 
 Layer2 layer2;
 
@@ -26,16 +27,6 @@ static void l2_send_ping(uint8_t to)
 	l2_send(m, to);
 }
 
-static void l2_send_pong(uint8_t to)
-{
-	msg_t *m = msg_new(0);
-
-	msg_header_t *mh = msg_get_header(m);
-	mh->type = MSG_L2_PONG;
-
-	l2_send(m, to);
-}
-
 /* -------------------------------------------------------------------------- */
 
 static void l2_recv_pre(uint8_t addr)
@@ -54,13 +45,6 @@ static void l2_recv_pre(uint8_t addr)
 		l2_add_nb(addr);
 		l3_found(addr);
 	}
-}
-
-static void l2_recv_ping(msg_t *m)
-{
-	msg_header_t *mh = msg_get_header(m);
-	l2_send_pong(mh->l2_src);
-	msg_free(m);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -86,11 +70,6 @@ void l2_tick(void)
 		if(layer2.nb[i].timer == NODE_MAX_TIMER)
 		{
 			l2_send_ping(layer2.nb[i].addr);
-		}
-		else if(layer2.nb[i].timer == NODE_MAX_TIMER+PONG_MAX_TIMER)
-		{
-			l2_del_nb(layer2.nb[i].addr);
-			l3_died(layer2.nb[i].addr);
 		}
 
 		layer2.nb[i].timer++;
@@ -148,10 +127,6 @@ void l2_recv_irq(msg_t *m)
 
 	switch(mh->type)
 	{
-		case MSG_L2_PING:
-			l2_recv_ping(m);
-			break;
-
 		case MSG_L3_OGM:
 		case MSG_L3_ROGM:
 		case MSG_L3_KNOWN:
@@ -161,7 +136,7 @@ void l2_recv_irq(msg_t *m)
 			l3_recv_irq(m);
 			break;
 
-		default: // hello; pong;
+		default: // hello; ping;
 			msg_free(m);
 			break;
 	}
