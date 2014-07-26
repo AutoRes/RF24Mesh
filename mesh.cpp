@@ -38,10 +38,10 @@ void mesh_send(msg_t *m, uint8_t to, uint8_t type)
 void mesh_recv_irq(msg_t *m)
 {
 	queue_put((queue_entry*)m,&mesh.rx);
-	// TODO: notify app layer
+	// app_irq
 }
 
 msg_t *mesh_recv(void)
 {
-	return (msg_t*)queue_get(&radio.tx);
+	return (msg_t*)queue_get(&mesh.rx);
 }
