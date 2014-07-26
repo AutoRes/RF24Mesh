@@ -12,7 +12,7 @@
 #define BCAST_PIPE 2
 #define SELF_PIPE  1
 
-#define RETRY_DELAY 4
+#define RETRY_DELAY 15
 #define RETRY_MAX   15
 
 #define MAX_TX_PENDING 3

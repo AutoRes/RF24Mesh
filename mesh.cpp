@@ -32,7 +32,7 @@ void mesh_send(msg_t *m, uint8_t to, uint8_t type)
 	l3_send(m, to);
 }
 
-void mesh_recv_irq(msg_t *m)
+void _mesh_recv_irq(msg_t *m)
 {
 	queue_put((queue_entry*)m,&mesh.rx);
 	// TODO: notify app layer

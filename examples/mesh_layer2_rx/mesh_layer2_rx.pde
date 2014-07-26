@@ -8,8 +8,9 @@
 
 void l3_recv_irq(msg_t *m)
 {
-	uint8_t *pl = msg_get_pl(m);	
+	uint8_t *pl = msg_get_pl(m);
 	Serial.println(pl[0], HEX);
+	msg_free(m);
 }
 
 void setup()

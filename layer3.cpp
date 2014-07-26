@@ -93,7 +93,9 @@ static bool l3_recv_broadcast_pre(msg_t *m)
 static void l3_recv_ogm(msg_t *m)
 {
 	if(l3_recv_broadcast_pre(m))
+	{
 		l3_forward(m);
+	}
 }
 
 static void l3_recv_rogm(msg_t *m)
@@ -121,7 +123,7 @@ static void l3_recv_known(msg_t *m)
 		msg_header_t *mh = msg_get_header(m);
 		uint8_t addr = mh->pl[0];
 
-		if(!layer3.nodes[addr].hop)
+		if(!layer3.nodes[addr].hop && addr != radio.self_addr)
 		{
 			layer3.nodes[addr].hop = mh->l2_src;
 
@@ -221,8 +223,8 @@ void l3_died(uint8_t addr)
 
 void l3_found(uint8_t addr)
 {
-	layer3.nodes[addr].hop = addr;
 	l3_send_known();
+	layer3.nodes[addr].hop = addr;
 }
 
 /* -------------------------------------------------------------------------- */
