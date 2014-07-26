@@ -2,24 +2,22 @@
 #include "RF24.h"
 #include "radio.h"
 #include "msg.h"
+#include "TimerOne.h"
 
 void setup()
 {
 	Serial.begin(57600);
 	// same pins as RF24 library.
 	radio_init(0x02);
+        l2_init();
 }
 
 void loop()
 {
-	static uint8_t pl;
-	size_t len = 1;
-	for (int i=0; i<10; i++) {
-		msg_t *m = msg_new(len, true);
-		m->dst = 0x01;
-		m->pl[0] = pl++;
-//		radio_send(m);
-	}
+      msg_t *m = msg_new(sizeof(uint8_t));
+      msg_get_header(m)->type = MSG_PL;
+      msg_get_pl(m)[0] = 0x01;
+      l2_send(m, 0x01);
 
-	delay(1000);
+      delay(10);
 }
