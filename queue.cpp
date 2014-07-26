@@ -34,3 +34,8 @@ T *queue_get(H *h)
 	queue_entry_init(l);
 	return l;
 }
+
+T *queue_peek(H *h)
+{
+	return h->head;
+}

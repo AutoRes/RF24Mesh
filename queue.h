@@ -35,6 +35,7 @@ void queue_put(T *l, H *h);
 
 /** Get a element from list head. */
 T *queue_get(H *h);
+T *queue_peek(H *h);
 
 /* put & get for overloading types: The types must create the list as the first
  * field like so: 'struct queue _;' */
