@@ -134,8 +134,8 @@ static void l3_recv_broadcast(msg_t *m)
 {
 	if(l3_recv_broadcast_pre(m))
 	{
-		mesh_recv_irq(m);
 		l3_forward(msg_dup(m));
+		mesh_recv_irq(m);
 	}
 }
 
@@ -143,6 +143,9 @@ static void l3_recv_broadcast(msg_t *m)
 
 void l3_init(void)
 {
+#define TICK_uS 50000
+	Timer1.initialize(TICK_uS);
+	Timer1.attachInterrupt(l3_tick);
 }
 
 void l3_tick(void)
@@ -153,6 +156,8 @@ void l3_tick(void)
 		layer3.ogm_cnt = 0;
 	}
 	else layer3.ogm_cnt++;
+
+	l2_tick();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -215,6 +220,7 @@ void l3_died(uint8_t addr)
 
 void l3_found(uint8_t addr)
 {
+	layer3.nodes[addr].hop = addr;
 	l3_send_known();
 }
 
