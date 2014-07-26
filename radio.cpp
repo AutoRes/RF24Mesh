@@ -13,11 +13,11 @@ static uint64_t addr2pipe(uint8_t addr)
 
 static void adjust_pipes()
 {
-	radio.rf24->openReadingPipe(BCAST_PIPE, addr2pipe(BCAST_ADDR));
-	radio.rf24->openReadingPipe(SELF_PIPE, addr2pipe(radio.self_addr));
+	rf24_openReadingPipe(BCAST_PIPE, addr2pipe(BCAST_ADDR));
+	rf24_openReadingPipe(SELF_PIPE, addr2pipe(radio.self_addr));
 
-	radio.rf24->setAutoAck(BCAST_PIPE, false);
-	radio.rf24->setAutoAck(SELF_PIPE, true);
+	rf24_setAutoAck(BCAST_PIPE, false);
+	rf24_setAutoAck(SELF_PIPE, true);
 }
 
 static void _radio_send(void)
@@ -27,23 +27,23 @@ static void _radio_send(void)
 	if(m)
 	{
 		radio.listening = false;
-		radio.rf24->stopListening();
+		rf24_stopListening();
 
 		if(m->dst == BCAST_ADDR)
-			radio.rf24->setAutoAck(false);
+			rf24_setAutoAck(false);
 		else
-			radio.rf24->setAutoAck(true);
+			rf24_setAutoAck(true);
 
 		radio.last_dst_addr = m->dst;
-		radio.rf24->openWritingPipe(addr2pipe(m->dst));
-		radio.rf24->startWrite(m->pl, m->len);
+		rf24_openWritingPipe(addr2pipe(m->dst));
+		rf24_startWrite(m->pl, m->len);
 
 		msg_free(m);
 	}
 	else
 	{
 		adjust_pipes();
-		radio.rf24->startListening();
+		rf24_startListening();
 		radio.listening = true;
 	}
 }
@@ -53,9 +53,9 @@ static void _radio_recv(void)
 	msg_t *m;
 	uint8_t pipe;
 
-	if(radio.rf24->available(&pipe))
+	if(rf24_available(&pipe))
 	{
-		uint8_t len = radio.rf24->getDynamicPayloadSize();
+		uint8_t len = rf24_getDynamicPayloadSize();
 		m = msg_new(len, true);
 
 		if(pipe == SELF_PIPE)
@@ -63,7 +63,7 @@ static void _radio_recv(void)
 		else
 			m->dst = BCAST_ADDR;
 
-		radio.rf24->read(m->pl, m->len);
+		rf24_read(m->pl, m->len);
 		l2_recv_irq(m);
 	}
 }
@@ -71,7 +71,7 @@ static void _radio_recv(void)
 static void radio_irq(void)
 {
 	bool tx_ok, tx_fail, rx_ready;
-	radio.rf24->whatHappened(tx_ok, tx_fail, rx_ready);
+	rf24_whatHappened(tx_ok, tx_fail, rx_ready);
 
 	if(tx_ok || tx_fail)
 	{
@@ -93,17 +93,17 @@ static void radio_irq(void)
 
 void radio_init(uint8_t self_addr, uint8_t irq_n, uint8_t cepin, uint8_t cspin)
 {
-	radio.rf24 = new RF24(cepin, cspin);
+	rf24_init(cepin, cspin);
 	attachInterrupt(irq_n, radio_irq, FALLING);
 
-	radio.rf24->begin();
-	radio.rf24->setRetries(RETRY_DELAY, RETRY_MAX);
-	radio.rf24->enableDynamicPayloads();
+	rf24_begin();
+	rf24_setRetries(RETRY_DELAY, RETRY_MAX);
+	rf24_enableDynamicPayloads();
 
 	radio.self_addr = self_addr;
 	adjust_pipes();
 	
-	radio.rf24->startListening();
+	rf24_startListening();
 	radio.listening = true;
 
 	queue_head_init(&radio.tx);
