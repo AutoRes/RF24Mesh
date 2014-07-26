@@ -128,7 +128,7 @@ void l2_recv_irq(msg_t *m)
 		case MSG_L3_KNOWN:
 		case MSG_PL_BROADCAST:
 		case MSG_PL_MULTICAST:
-		case MSG_PL:
+		case MSG_PL_UNICAST:
 			l3_recv_irq(m);
 			break;
 

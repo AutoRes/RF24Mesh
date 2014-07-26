@@ -22,7 +22,7 @@ enum
 	MSG_L3_KNOWN,
 	MSG_PL_BROADCAST,
 	MSG_PL_MULTICAST,
-	MSG_PL
+	MSG_PL_UNICAST
 };
 
 struct msg_header_t

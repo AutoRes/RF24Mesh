@@ -15,7 +15,7 @@ void loop()
 {
       msg_t *m = msg_new(sizeof(uint8_t));
       msg_get_pl(m)[0] = 0x01;
-      mesh_send(m, 0x01, MSG_PL);
+      mesh_send(m, 0x01, MSG_PL_UNICAST);
 
       delay(100);
 }

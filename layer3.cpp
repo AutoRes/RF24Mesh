@@ -132,13 +132,28 @@ static void l3_recv_known(msg_t *m)
 	}
 }
 
-static void l3_recv_broadcast(msg_t *m)
+static void l3_recv_pl_broadcast(msg_t *m)
 {
 	if(l3_recv_broadcast_pre(m))
 	{
 		l3_forward(msg_dup(m));
 		mesh_recv_irq(m);
 	}
+}
+
+static void l3_recv_pl_multicast(msg_t *m)
+{
+	mesh_recv_irq(m);
+}
+
+static void l3_recv_pl_unicast(msg_t *m)
+{
+	msg_header_t *mh = msg_get_header(m);
+
+	if(mh->l3_dst == radio.self_addr)
+		mesh_recv_irq(m);
+	else
+		l3_forward(m);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -193,12 +208,15 @@ void l3_recv_irq(msg_t *m)
 			break;
 
 		case MSG_PL_BROADCAST:
-			l3_recv_broadcast(m);
+			l3_recv_pl_broadcast(m);
 			break;
 
 		case MSG_PL_MULTICAST:
-		case MSG_PL:
-			mesh_recv_irq(m);
+			l3_recv_pl_multicast(m);
+			break;
+
+		case MSG_PL_UNICAST:
+			l3_recv_pl_unicast(m);
 			break;
 
 		default:
