@@ -76,10 +76,10 @@ static void _radio_recv(void)
 
 /* -------------------------------------------------------------------------- */
 
-void radio_init(uint32_t mesh_id, uint8_t self_addr)
+void radio_init(uint32_t mesh_id, addr_t self_addr)
 {
 	rf24_begin();
-	rf24_setRetries(RETRY_DELAY, RETRY_MAX);
+	rf24_setRetries(SEND_RETRY_DELAY, SEND_NUM_RETRY_MAX);
 	rf24_enableDynamicPayloads();
 
 	radio.mesh_id = mesh_id;

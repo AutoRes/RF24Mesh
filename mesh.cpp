@@ -29,7 +29,6 @@ void mesh_init(uint8_t self_addr,
 	mesh.app_irq = app_irq;
 	queue_head_init(&mesh.rx);
 
-#define TICK_uS 50000
 	Timer1.initialize(TICK_uS);
 	Timer1.attachInterrupt(mesh_tick);
 
@@ -48,7 +47,7 @@ void mesh_tick(void)
 	- MSG_PL_MULTICAST
 	- MSG_PL_UNICAST
 */
-void mesh_send(msg_t *m, uint8_t to, uint8_t type)
+void mesh_send(msg_t *m, addr_t to, uint8_t type)
 {
 	msg_header_t *mh = msg_get_header(m);
 	mh->type = type;

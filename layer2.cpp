@@ -20,7 +20,7 @@ static void l2_send_hello(void)
 	l2_send(m, BCAST_ADDR);
 }
 
-static void l2_send_ping(uint8_t to)
+static void l2_send_ping(addr_t to)
 {
 	msg_t *m = msg_new(0);
 
@@ -32,22 +32,17 @@ static void l2_send_ping(uint8_t to)
 
 /* -------------------------------------------------------------------------- */
 
-static void l2_recv_pre(uint8_t addr)
+static void l2_recv_pre(addr_t addr)
 {
-	uint8_t i;
-	for(i = 0; i < layer2.nb_l; i++)
+	nb_iter_t nb_i;
+	nb_i = l2_nb_find(addr);
+
+	if(nb_i == -1)
 	{
-		if(layer2.nb[i].addr == addr)
-		{
-			layer2.nb[i].timer = 0;
-			break;
-		}
-	}
-	if(i == layer2.nb_l)
-	{
-		l2_add_nb(addr);
+		l2_nb_add(addr);
 		l3_found(addr);
 	}
+	else layer2.nb[nb_i].timer = 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -58,16 +53,16 @@ void l2_init(void)
 
 void l2_tick(void)
 {
-	if(layer2.hello_cnt == HELLO_MAX_TIMER)
+	if(layer2.hello_cnt == HELLO_TIMER_MAX)
 	{
 		l2_send_hello();
 		layer2.hello_cnt = 0;
 	}
 	else layer2.hello_cnt++;
 
-	for(uint8_t i = 0; i < layer2.nb_l; i++)
+	for(nb_iter_t i = 0; i < layer2.nb_l; i++)
 	{
-		if(layer2.nb[i].timer == NODE_MAX_TIMER)
+		if(layer2.nb[i].timer == NB_TIMER_MAX)
 		{
 			l2_send_ping(layer2.nb[i].addr);
 		}
@@ -78,19 +73,35 @@ void l2_tick(void)
 
 /* -------------------------------------------------------------------------- */
 
-void l2_add_nb(uint8_t addr)
+// TODO: binary search
+uint8_t l2_nb_find(addr_t addr)
 {
-	if(layer2.nb_l < NB_MAX)
+	for(nb_iter_t i = 0; i < layer2.nb_l; i++)
+	{
+		if(layer2.nb[i].addr == addr)
+			return i;
+	}
+	return -1;
+}
+
+// TODO: sorted add
+bool l2_nb_add(addr_t addr)
+{
+	if(layer2.nb_l < NUM_NB_MAX)
 	{
 		layer2.nb[layer2.nb_l].addr = addr;
 		layer2.nb[layer2.nb_l].timer = 0;
 		layer2.nb_l++;
+
+		return true;
 	}
+	return false;
 }
 
-void l2_del_nb(uint8_t addr)
+// TODO: sorted del
+void l2_nb_del(addr_t addr)
 {
-	for(uint8_t i = 0; i < layer2.nb_l; i++)
+	for(nb_iter_t i = 0; i < layer2.nb_l; i++)
 	{
 		if(layer2.nb[i].addr == addr)
 		{
@@ -104,13 +115,13 @@ void l2_del_nb(uint8_t addr)
 
 /* -------------------------------------------------------------------------- */
 
-void l2_on_send_failure(uint8_t addr)
+void l2_on_send_failure(addr_t addr)
 {
-	l2_del_nb(addr);
+	l2_nb_del(addr);
 	l3_died(addr);
 }
 
-void l2_send(msg_t *m, uint8_t to)
+void l2_send(msg_t *m, addr_t to)
 {
 	msg_header_t *mh = msg_get_header(m);
 	mh->l2_src = radio.self_addr;

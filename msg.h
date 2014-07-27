@@ -2,13 +2,14 @@
 #define MSG_H
 #include <stdint.h>
 #include <stdlib.h>
+#include "mesh_config.h"
 #include "queue.h"
 
 struct msg_t
 {
 	queue_entry entry;
 
-	uint8_t dst;
+	addr_t dst;
 	uint8_t len;
 	uint8_t pl[];
 };
@@ -27,12 +28,12 @@ enum
 
 struct msg_header_t
 {
-	uint8_t l2_src; // 1
-	uint8_t l3_src; // 2
-	uint8_t l3_dst; // 3
+	addr_t l2_src;
+	addr_t l3_src;
+	addr_t l3_dst;
 
 	uint8_t seq:1;
-	uint8_t type:7; // 4
+	uint8_t type:7;
 
 	uint8_t pl[];
 };

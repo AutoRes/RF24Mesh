@@ -1,6 +1,7 @@
 #ifndef MESH_H
 #define MESH_H
 
+#include "mesh_config.h"
 #include "queue.h"
 #include "msg.h"
 
@@ -29,9 +30,6 @@ extern Mesh mesh;
  * | IRQ  | 2 (IRQ #0)  | 8         |
  * ----------------------------------
  */
-#define DEFAULT_IRQ_N 0
-#define DEFAULT_CEPIN 9
-#define DEFAULT_CSPIN 10
 void mesh_init(uint8_t self_addr, 
 		irq_t app_irq = NULL, 
 		uint8_t irq_n = DEFAULT_IRQ_N,
@@ -39,7 +37,7 @@ void mesh_init(uint8_t self_addr,
 		uint8_t cspin = DEFAULT_CSPIN);
 void mesh_tick(void);
 
-void mesh_send(msg_t *m, uint8_t to,
+void mesh_send(msg_t *m, addr_t to,
 		uint8_t type = MSG_PL_UNICAST);
 void mesh_recv_irq(msg_t *m);
 msg_t *mesh_recv(void);

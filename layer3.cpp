@@ -20,7 +20,7 @@ static void l3_forward(msg_t *m)
 		if(mh->type != MSG_PL_MULTICAST)
 			layer3.nodes[mh->l3_src].seq = mh->seq;
 
-		for(uint8_t i = 0; i < layer2.nb_l; i++)
+		for(nb_iter_t i = 0; i < layer2.nb_l; i++)
 		{
 			msg_t *md = msg_dup(m);
 			l2_send(md, layer2.nb[i].addr);
@@ -49,7 +49,7 @@ static void l3_send_ogm()
 	l3_send(m, BCAST_ADDR);
 }
 
-static void l3_send_rogm(uint8_t addr)
+static void l3_send_rogm(addr_t addr)
 {
 	msg_t *m = msg_new(1);
 
@@ -62,7 +62,7 @@ static void l3_send_rogm(uint8_t addr)
 
 static void l3_send_known(void)
 {
-	for(uint8_t i = 1; i <= NODES_MAX; i++)
+	for(addr_t i = 1; i <= NUM_NODES_MAX; i++)
 	{
 		if(layer3.nodes[i].hop)
 		{
@@ -107,13 +107,13 @@ static void l3_recv_rogm(msg_t *m)
 	if(l3_recv_broadcast_pre(m))
 	{
 		msg_header_t *mh = msg_get_header(m);
-		uint8_t addr = mh->pl[0];
+		addr_t addr = mh->pl[0];
 
 		l3_forward(m);
 
 		if(addr != radio.self_addr)
 		{
-			l2_del_nb(addr);
+			l2_nb_del(addr);
 			layer3.nodes[addr].hop = 0;
 		}
 		else l3_send_ogm();
@@ -125,7 +125,7 @@ static void l3_recv_known(msg_t *m)
 	if(l3_recv_broadcast_pre(m))
 	{
 		msg_header_t *mh = msg_get_header(m);
-		uint8_t addr = mh->pl[0];
+		addr_t addr = mh->pl[0];
 
 		if(!layer3.nodes[addr].hop && addr != radio.self_addr)
 		{
@@ -169,7 +169,7 @@ void l3_init(void)
 
 void l3_tick(void)
 {
-	if(layer3.ogm_cnt == OGM_TIMER)
+	if(layer3.ogm_cnt == OGM_TIMER_MAX)
 	{
 		l3_send_ogm();
 		layer3.ogm_cnt = 0;
@@ -179,7 +179,7 @@ void l3_tick(void)
 
 /* -------------------------------------------------------------------------- */
 
-void l3_send(msg_t *m, uint8_t to)
+void l3_send(msg_t *m, addr_t to)
 {
 	msg_header_t *mh = msg_get_header(m);
 	mh->l3_src = radio.self_addr;
@@ -232,13 +232,13 @@ void l3_recv_irq(msg_t *m)
 
 /* -------------------------------------------------------------------------- */
 
-void l3_died(uint8_t addr)
+void l3_died(addr_t addr)
 {
 	layer3.nodes[addr].hop = 0;
 	l3_send_rogm(addr);
 }
 
-void l3_found(uint8_t addr)
+void l3_found(addr_t addr)
 {
 	l3_send_known();
 	layer3.nodes[addr].hop = addr;
