@@ -73,43 +73,65 @@ void l2_tick(void)
 
 /* -------------------------------------------------------------------------- */
 
-// TODO: binary search
 uint8_t l2_nb_find(addr_t addr)
 {
-	for(nb_iter_t i = 0; i < layer2.nb_l; i++)
+	nb_iter_t min = 0, max = layer2.nb_l-1, med;
+
+	while(min <= max)
 	{
-		if(layer2.nb[i].addr == addr)
-			return i;
+		med = (min+max)/2;
+
+		if(addr == layer2.nb[med].addr)
+			return med;
+		else if(addr > layer2.nb[med].addr)
+			min = med + 1;
+		else
+			max = med - 1;
 	}
+
 	return -1;
 }
 
-// TODO: sorted add
 bool l2_nb_add(addr_t addr)
 {
 	if(layer2.nb_l < NUM_NB_MAX)
 	{
-		layer2.nb[layer2.nb_l].addr = addr;
-		layer2.nb[layer2.nb_l].timer = 0;
-		layer2.nb_l++;
+		nb_iter_t i;
 
+		for(nb_iter_t i = layer2.nb_l; i >= 0; i--)
+		{
+			if(i > 0 && layer2.nb[i-1].addr > addr)
+			{
+				layer2.nb[i] = layer2.nb[i-1];
+			}
+			else
+			{
+				layer2.nb[i].addr = addr;
+				layer2.nb[i].timer = 0;
+				break;
+			}
+		}
+
+		layer2.nb_l++;
 		return true;
 	}
 	return false;
 }
 
-// TODO: sorted del
 void l2_nb_del(addr_t addr)
 {
-	for(nb_iter_t i = 0; i < layer2.nb_l; i++)
-	{
+	nb_iter_t i;
+
+	for(i = 0; i < layer2.nb_l; i++)
 		if(layer2.nb[i].addr == addr)
-		{
-			layer2.nb_l--;
-			layer2.nb[i].addr = layer2.nb[layer2.nb_l].addr;
-			layer2.nb[i].timer = layer2.nb[layer2.nb_l].timer;
-			return;
-		}
+			break;
+
+	if(i < layer2.nb_l) // found
+	{
+		for(;i < layer2.nb_l-1; i++)
+			layer2.nb[i] = layer2.nb[i+1];
+
+		layer2.nb_l--;
 	}
 }
 
