@@ -1,6 +1,7 @@
 #ifndef MESH_H
 #define MESH_H
 
+#include <stdlib.h>
 #include "mesh_config.h"
 #include "queue.h"
 #include "msg.h"
@@ -38,8 +39,7 @@ void mesh_init(uint8_t self_addr,
 		uint32_t mesh_id = DEFAULT_MESH_ID);
 void mesh_tick(void);
 
-void mesh_send(msg_t *m, addr_t to,
-		uint8_t type = MSG_PL_UNICAST);
+void mesh_send(msg_t *m, addr_t to);
 void mesh_recv_irq(msg_t *m);
 msg_t *mesh_recv(void);
 

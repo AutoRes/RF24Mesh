@@ -2,8 +2,7 @@
 #include "TimerOne.h"
 #include "mesh.h"
 
-const uint8_t my_addr = 0x02;
-const uint8_t nb_addr = 0x01;
+const addr_t my_addr = 0x01;
 
 void setup()
 {
@@ -15,7 +14,7 @@ void loop()
 {
       msg_t *m = msg_new(sizeof(uint8_t));
       msg_get_pl(m)[0] = my_addr;
-      mesh_send(m, nb_addr);
+      mesh_send(m, BCAST_ADDR);
 
       delay(100); // ms
 }

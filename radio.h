@@ -1,5 +1,5 @@
-#ifndef __RADIO__
-#define __RADIO__
+#ifndef RADIO_H
+#define RADIO_H
 
 #include "mesh_config.h"
 #include "queue.h"

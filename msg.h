@@ -1,7 +1,6 @@
 #ifndef MSG_H
 #define MSG_H
-#include <stdint.h>
-#include <stdlib.h>
+
 #include "mesh_config.h"
 #include "queue.h"
 
@@ -21,9 +20,7 @@ enum
 	MSG_L3_OGM,
 	MSG_L3_ROGM,
 	MSG_L3_KNOWN,
-	MSG_PL_BROADCAST,
-	MSG_PL_MULTICAST,
-	MSG_PL_UNICAST
+	MSG_PL
 };
 
 struct msg_header_t

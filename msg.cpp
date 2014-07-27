@@ -1,6 +1,6 @@
-#include "msg.h"
 #include <stdlib.h>
 #include <string.h>
+#include "msg.h"
 
 msg_t *msg_new(uint8_t len, bool raw)
 {

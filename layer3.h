@@ -8,11 +8,9 @@ struct Layer3
 {
 	struct
 	{
-		// assuming addr_t == uint8_t
-		addr_t hop:7;
+		addr_t hop:((sizeof(addr_t)*8)-1);
 		addr_t seq:1;
 	} nodes[NUM_NODES_MAX];
-	addr_t nodes_n;
 
 	uint8_t ogm_cnt;
 };

@@ -37,7 +37,7 @@ typedef uint8_t nb_iter_t;
 #define DEFAULT_CEPIN 9
 #define DEFAULT_CSPIN 10
 
-#define TICK_uS       50000 // 50ms
+#define TICK_uS 50000 // 50ms
 
 
 #endif

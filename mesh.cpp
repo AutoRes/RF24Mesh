@@ -42,16 +42,10 @@ void mesh_tick(void)
 	l3_tick();
 }
 
-/*
-	Available types:
-	- MSG_PL_BROADCAST
-	- MSG_PL_MULTICAST
-	- MSG_PL_UNICAST
-*/
-void mesh_send(msg_t *m, addr_t to, uint8_t type)
+void mesh_send(msg_t *m, addr_t to)
 {
 	msg_header_t *mh = msg_get_header(m);
-	mh->type = type;
+	mh->type = MSG_PL;
 	l3_send(m, to);
 }
 

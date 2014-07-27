@@ -17,14 +17,11 @@ static void l3_forward(msg_t *m)
 
 	if(mh->l3_dst == BCAST_ADDR)
 	{
-		if(mh->type != MSG_PL_MULTICAST)
-			layer3.nodes[mh->l3_src].seq = mh->seq;
+		layer3.nodes[mh->l3_src].seq = mh->seq;
 
 		for(nb_iter_t i = 0; i < layer2.nb_l; i++)
-		{
-			msg_t *md = msg_dup(m);
-			l2_send(md, layer2.nb[i].addr);
-		}
+			l2_send(msg_dup(m), layer2.nb[i].addr);
+
 		msg_free(m);
 	}
 	else
@@ -34,7 +31,7 @@ static void l3_forward(msg_t *m)
 		if(hop)
 			l2_send(m, hop);
 		else
-			// TODO: send alert - node does not exist
+			// TODO: node does not exist
 			msg_free(m);
 	}
 }
@@ -90,7 +87,6 @@ static bool l3_recv_broadcast_pre(msg_t *m)
 		return true;
 	}
 
-	msg_free(m);
 	return false;
 }
 
@@ -100,6 +96,7 @@ static void l3_recv_ogm(msg_t *m)
 	{
 		l3_forward(m);
 	}
+	else msg_free(m);
 }
 
 static void l3_recv_rogm(msg_t *m)
@@ -118,6 +115,7 @@ static void l3_recv_rogm(msg_t *m)
 		}
 		else l3_send_ogm();
 	}
+	else msg_free(m);
 }
 
 static void l3_recv_known(msg_t *m)
@@ -135,30 +133,29 @@ static void l3_recv_known(msg_t *m)
 		}
 		else msg_free(m);
 	}
+	else msg_free(m);
 }
 
-static void l3_recv_pl_broadcast(msg_t *m)
-{
-	if(l3_recv_broadcast_pre(m))
-	{
-		l3_forward(msg_dup(m));
-		mesh_recv_irq(m);
-	}
-}
-
-static void l3_recv_pl_multicast(msg_t *m)
-{
-	mesh_recv_irq(m);
-}
-
-static void l3_recv_pl_unicast(msg_t *m)
+static void l3_recv_pl(msg_t *m)
 {
 	msg_header_t *mh = msg_get_header(m);
 
-	if(mh->l3_dst == radio.self_addr)
-		mesh_recv_irq(m);
-	else
-		l3_forward(m);
+	if(mh->l3_dst == BCAST_ADDR)
+	{
+		if(l3_recv_broadcast_pre(m))
+		{
+			l3_forward(msg_dup(m));
+			mesh_recv_irq(m);
+		}
+		else msg_free(m);
+	}
+	else // unicast
+	{
+		if(mh->l3_dst == radio.self_addr)
+			mesh_recv_irq(m);
+		else
+			l3_forward(m);
+	}
 }
 
 /* -------------------------------------------------------------------------- */
@@ -185,7 +182,7 @@ void l3_send(msg_t *m, addr_t to)
 	mh->l3_src = radio.self_addr;
 	mh->l3_dst = to;
 
-	if(to == BCAST_ADDR && mh->type != MSG_PL_MULTICAST)
+	if(to == BCAST_ADDR)
 	{
 		mh->seq = ++layer3.nodes[radio.self_addr].seq;
 		layer3.ogm_cnt = 0;
@@ -212,16 +209,8 @@ void l3_recv_irq(msg_t *m)
 			l3_recv_known(m);
 			break;
 
-		case MSG_PL_BROADCAST:
-			l3_recv_pl_broadcast(m);
-			break;
-
-		case MSG_PL_MULTICAST:
-			l3_recv_pl_multicast(m);
-			break;
-
-		case MSG_PL_UNICAST:
-			l3_recv_pl_unicast(m);
+		case MSG_PL:
+			l3_recv_pl(m);
 			break;
 
 		default:
@@ -240,8 +229,8 @@ void l3_died(addr_t addr)
 
 void l3_found(addr_t addr)
 {
-	l3_send_known();
 	layer3.nodes[addr].hop = addr;
+	l3_send_known();
 }
 
 /* -------------------------------------------------------------------------- */
