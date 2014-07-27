@@ -22,7 +22,7 @@ void mesh_init(uint8_t self_addr,
 		uint8_t cspin)
 {
 	rf24_init(cepin, cspin);
-	radio_init(0xC2C2C2C2, self_addr);
+	radio_init(MESH_ID, self_addr);
 	l2_init();
 	l3_init();
 

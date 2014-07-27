@@ -37,7 +37,7 @@ static void l2_recv_pre(addr_t addr)
 	nb_iter_t nb_i;
 	nb_i = l2_nb_find(addr);
 
-	if(nb_i == -1)
+	if(nb_i < 0) // not found
 	{
 		l2_nb_add(addr);
 		l3_found(addr);
