@@ -14,6 +14,7 @@ typedef uint8_t addr_t;
 #define SEND_RETRY_DELAY   4 // 1 == 250us
 #define SEND_NUM_RETRY_MAX 15
 
+
 // layer2
 
 typedef uint8_t nb_iter_t;
@@ -28,15 +29,16 @@ typedef uint8_t nb_iter_t;
 #define NUM_NODES_MAX 127
 #define OGM_TIMER_MAX 100 // 1 == TICK_uS
 
+
 // mesh
 
-#define MESH_ID       0xC2C2C2C2
+#define MESH_ID 0xC2C2C2C2
 
 #define DEFAULT_IRQ_N 0
 #define DEFAULT_CEPIN 9
 #define DEFAULT_CSPIN 10
 
-#define TICK_uS       50000
+#define TICK_uS       50000 // 50ms
 
 
 #endif
