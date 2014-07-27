@@ -1,8 +1,6 @@
 #include "SPI.h"
-#include "RF24.h"
-#include "radio.h"
-#include "msg.h"
 #include "TimerOne.h"
+#include "mesh.h"
 
 void setup()
 {
@@ -15,7 +13,7 @@ void loop()
 {
       msg_t *m = msg_new(sizeof(uint8_t));
       msg_get_pl(m)[0] = 0x01;
-      mesh_send(m, 0x01, MSG_PL_UNICAST);
+      mesh_send(m, 0x01);
 
       delay(100);
 }

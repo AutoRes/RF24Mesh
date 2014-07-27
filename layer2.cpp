@@ -1,6 +1,10 @@
 /* -------------------------------------------------------------------------- */
 
+#include "radio.h"
 #include "layer2.h"
+#include "layer3.h"
+
+#include "msg.h"
 
 Layer2 layer2;
 

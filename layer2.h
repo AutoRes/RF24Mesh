@@ -2,8 +2,6 @@
 #define LAYER2_H
 
 #include "msg.h"
-#include "radio.h"
-#include "layer3.h"
 
 #define NB_MAX 32
 

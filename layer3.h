@@ -2,9 +2,6 @@
 #define LAYER3_H
 
 #include "msg.h"
-#include "radio.h"
-#include "layer2.h"
-#include "mesh.h"
 
 #define NODES_MAX 127
 

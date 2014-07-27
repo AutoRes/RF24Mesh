@@ -1,6 +1,12 @@
 /* -------------------------------------------------------------------------- */
 
+#include "RF24.h"
+
 #include "radio.h"
+#include "layer2.h"
+
+#include "queue.h"
+#include "msg.h"
 
 Radio radio;
 
@@ -8,7 +14,7 @@ Radio radio;
 
 static uint64_t addr2pipe(uint8_t addr)
 {
-	return 0xC2C2C2C200LL | addr;
+	return ( radio.mesh_id << 8 ) | addr;
 }
 
 static void adjust_pipes()
@@ -68,7 +74,25 @@ static void _radio_recv(void)
 	}
 }
 
-static void radio_irq(void)
+/* -------------------------------------------------------------------------- */
+
+void radio_init(uint32_t mesh_id, uint8_t self_addr)
+{
+	rf24_begin();
+	rf24_setRetries(RETRY_DELAY, RETRY_MAX);
+	rf24_enableDynamicPayloads();
+
+	radio.mesh_id = mesh_id;
+	radio.self_addr = self_addr;
+	adjust_pipes();
+	
+	rf24_startListening();
+	radio.listening = true;
+
+	queue_head_init(&radio.tx);
+}
+
+void radio_irq(void)
 {
 	bool tx_ok, tx_fail, rx_ready;
 	rf24_whatHappened(tx_ok, tx_fail, rx_ready);
@@ -87,26 +111,6 @@ static void radio_irq(void)
 	{
 		_radio_recv();
 	}
-}
-
-/* -------------------------------------------------------------------------- */
-
-void radio_init(uint8_t self_addr, uint8_t irq_n, uint8_t cepin, uint8_t cspin)
-{
-	rf24_init(cepin, cspin);
-	attachInterrupt(irq_n, radio_irq, FALLING);
-
-	rf24_begin();
-	rf24_setRetries(RETRY_DELAY, RETRY_MAX);
-	rf24_enableDynamicPayloads();
-
-	radio.self_addr = self_addr;
-	adjust_pipes();
-	
-	rf24_startListening();
-	radio.listening = true;
-
-	queue_head_init(&radio.tx);
 }
 
 void radio_send(msg_t *m)
