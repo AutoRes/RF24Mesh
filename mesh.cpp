@@ -19,10 +19,11 @@ void mesh_init(uint8_t self_addr,
 		irq_t app_irq,
 		uint8_t irq_n,
 		uint8_t cepin,
-		uint8_t cspin)
+		uint8_t cspin,
+		uint32_t mesh_id)
 {
 	rf24_init(cepin, cspin);
-	radio_init(MESH_ID, self_addr);
+	radio_init(mesh_id, self_addr);
 	l2_init();
 	l3_init();
 

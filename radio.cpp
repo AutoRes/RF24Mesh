@@ -14,7 +14,7 @@ Radio radio;
 
 static uint64_t addr2pipe(uint8_t addr)
 {
-	return ( radio.mesh_id << 8 ) | addr;
+	return (((uint64_t)radio.mesh_id)<< 8) | addr;
 }
 
 static void adjust_pipes()

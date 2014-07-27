@@ -8,7 +8,7 @@ const uint8_t nb_addr = 0x01;
 void setup()
 {
 	Serial.begin(57600);
-	mesh_init(my_addr);
+	mesh_init(my_addr, irq);
 }
 
 void loop()

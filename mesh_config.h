@@ -32,8 +32,7 @@ typedef uint8_t nb_iter_t;
 
 // mesh
 
-#define MESH_ID 0xC2C2C2C2
-
+#define DEFAULT_MESH_ID 0xC2C2C2C2
 #define DEFAULT_IRQ_N 0
 #define DEFAULT_CEPIN 9
 #define DEFAULT_CSPIN 10
