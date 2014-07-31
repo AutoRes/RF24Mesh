@@ -4,7 +4,7 @@
 #include "mesh_config.h"
 #include "msg.h"
 
-struct Layer3
+typedef struct
 {
 	struct
 	{
@@ -13,7 +13,7 @@ struct Layer3
 	} nodes[NUM_NODES_MAX];
 
 	uint8_t ogm_cnt;
-};
+} Layer3;
 
 extern Layer3 layer3;
 

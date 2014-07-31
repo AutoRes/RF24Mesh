@@ -4,7 +4,7 @@
 #include "mesh_config.h"
 #include "msg.h"
 
-struct Layer2
+typedef struct
 {
 	struct
 	{
@@ -14,7 +14,7 @@ struct Layer2
 	nb_iter_t nb_l;
 
 	uint8_t hello_cnt;
-};
+} Layer2;
 
 extern Layer2 layer2;
 

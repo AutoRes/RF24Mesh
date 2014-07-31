@@ -11,7 +11,7 @@
 #define __RF24_CONFIG_H__
 
 #if ARDUINO < 100
-#include <WProgram.h>
+//#include <WProgram.h>
 #else
 #include <Arduino.h>
 #endif
@@ -23,9 +23,10 @@
 #include <SPI.h>
 #else
 #include <stdint.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-extern HardwareSPI SPI;
+//extern HardwareSPI SPI;
 #define _BV(x) (1<<(x))
 #endif
 
@@ -51,7 +52,7 @@ extern HardwareSPI SPI;
 #include <avr/pgmspace.h>
 #define PRIPSTR "%S"
 #else
-typedef char const char;
+//typedef char const char;
 typedef uint16_t prog_uint16_t;
 #define PSTR(x) (x)
 #define printf_P printf

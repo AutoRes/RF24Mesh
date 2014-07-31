@@ -42,7 +42,7 @@ typedef enum { RF24_CRC_DISABLED = 0, RF24_CRC_8, RF24_CRC_16 } rf24_crclength_e
  * Driver for nRF24L01(+) 2.4GHz Wireless Transceiver
  */
 
-struct RF24
+typedef struct
 {
   uint8_t ce_pin; /**< "Chip Enable" pin, activates the RX or TX role */
   uint8_t csn_pin; /**< SPI Chip select */
@@ -53,7 +53,7 @@ struct RF24
   bool dynamic_payloads_enabled; /**< Whether dynamic payloads are enabled. */
   uint8_t ack_payload_length; /**< Dynamic size of pending ack payload. */
   uint64_t pipe0_reading_address; /**< Last address set on pipe 0 for reading. */
-};
+} RF24;
 
 extern RF24 rf24;
 
@@ -455,7 +455,7 @@ void rf24_setAutoAck(bool enable);
  * @param pipe Which pipeline to modify
  * @param enable Whether to enable (true) or disable (false) auto-acks
  */
-void rf24_setAutoAck( uint8_t pipe, bool enable ) ;
+void rf24_setAutoAckPipe( uint8_t pipe, bool enable ) ;
 
 /**
  * Set Power Amplifier (PA) level to one of four levels.
@@ -556,7 +556,7 @@ void rf24_powerUp(void) ;
  * @param[out] pipe_num Which pipe has the payload available
  * @return True if there is a payload available, false if none is
  */
-bool rf24_available(uint8_t* pipe_num);
+bool rf24_availablePipe(uint8_t* pipe_num);
 
 /**
  * Non-blocking write to the open writing pipe
@@ -614,7 +614,7 @@ bool rf24_isAckPayloadAvailable(void);
  * @param[out] tx_fail The send failed, too many retries (MAX_RT)
  * @param[out] rx_ready There is a message waiting to be read (RX_DS)
  */
-void rf24_whatHappened(bool& tx_ok,bool& tx_fail,bool& rx_ready);
+void rf24_whatHappened(bool *tx_ok,bool *tx_fail,bool *rx_ready);
 
 /**
  * Test whether there was a carrier on the line for the

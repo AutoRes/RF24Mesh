@@ -485,7 +485,7 @@ bool rf24_write( const void* buf, uint8_t len )
   // * The send failed, too many retries (MAX_RT)
   // * There is an ack packet waiting (RX_DR)
   bool tx_ok, tx_fail;
-  rf24_whatHappened(tx_ok,tx_fail,rf24.ack_payload_available);
+  rf24_whatHappened(&tx_ok,&tx_fail,&rf24.ack_payload_available);
 
   //printf("%u%u%u\r\n",tx_ok,tx_fail,rf24.ack_payload_available);
 
@@ -545,12 +545,12 @@ uint8_t rf24_getDynamicPayloadSize(void)
 
 bool rf24_available(void)
 {
-  return rf24_available(NULL);
+  return rf24_availablePipe(NULL);
 }
 
 /****************************************************************************/
 
-bool rf24_available(uint8_t* pipe_num)
+bool rf24_availablePipe(uint8_t* pipe_num)
 {
   uint8_t pipe = ( rf24_get_status() >> RX_P_NO ) & B111;
 
@@ -573,16 +573,16 @@ bool rf24_read( void* buf, uint8_t len )
 
 /****************************************************************************/
 
-void rf24_whatHappened(bool& tx_ok,bool& tx_fail,bool& rx_ready)
+void rf24_whatHappened(bool *tx_ok,bool *tx_fail,bool *rx_ready)
 {
   // Read the status & reset the status in one easy call
   // Or is that such a good idea?
   uint8_t status = rf24_write_register(STATUS,_BV(RX_DR) | _BV(TX_DS) | _BV(MAX_RT) );
 
   // Report to the user what happened
-  tx_ok = status & _BV(TX_DS);
-  tx_fail = status & _BV(MAX_RT);
-  rx_ready = status & _BV(RX_DR);
+  *tx_ok = status & _BV(TX_DS);
+  *tx_fail = status & _BV(MAX_RT);
+  *rx_ready = status & _BV(RX_DR);
 }
 
 /****************************************************************************/
@@ -746,7 +746,7 @@ void rf24_setAutoAck(bool enable)
 
 /****************************************************************************/
 
-void rf24_setAutoAck( uint8_t pipe, bool enable )
+void rf24_setAutoAckPipe( uint8_t pipe, bool enable )
 {
   if ( pipe <= 6 )
   {

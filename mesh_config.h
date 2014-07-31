@@ -1,6 +1,8 @@
 #ifndef MESH_COMMON_H
 #define MESH_COMMON_H
 
+#include "RF24_config.h"
+
 #include <stdint.h>
 typedef uint8_t addr_t;
 

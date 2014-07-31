@@ -4,14 +4,14 @@
 #include "mesh_config.h"
 #include "queue.h"
 
-struct msg_t
+typedef struct
 {
 	queue_entry entry;
 
 	addr_t dst;
 	uint8_t len;
 	uint8_t pl[];
-};
+} msg_t;
 
 enum
 {
@@ -23,7 +23,7 @@ enum
 	MSG_PL
 };
 
-struct msg_header_t
+typedef struct
 {
 	addr_t l2_src;
 	addr_t l3_src;
@@ -33,9 +33,9 @@ struct msg_header_t
 	uint8_t type:7;
 
 	uint8_t pl[];
-};
+} msg_header_t;
 
-msg_t *msg_new(uint8_t len, bool raw = false);
+msg_t *msg_new(uint8_t len, bool raw);
 msg_t *msg_dup(msg_t *m);
 void   msg_free(msg_t *m);
 

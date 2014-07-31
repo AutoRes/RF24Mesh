@@ -14,12 +14,13 @@ Layer3 layer3;
 static void l3_forward(msg_t *m)
 {
 	msg_header_t *mh = msg_get_header(m);
+	nb_iter_t i;
 
 	if(mh->l3_dst == BCAST_ADDR)
 	{
 		layer3.nodes[mh->l3_src].seq = mh->seq;
 
-		for(nb_iter_t i = 0; i < layer2.nb_l; i++)
+		for(i = 0; i < layer2.nb_l; i++)
 			l2_send(msg_dup(m), layer2.nb[i].addr);
 
 		msg_free(m);
@@ -38,7 +39,7 @@ static void l3_forward(msg_t *m)
 
 static void l3_send_ogm()
 {
-	msg_t *m = msg_new(0);
+	msg_t *m = msg_new(0, false);
 
 	msg_header_t *mh = msg_get_header(m);
 	mh->type = MSG_L3_OGM;
@@ -48,7 +49,7 @@ static void l3_send_ogm()
 
 static void l3_send_rogm(addr_t addr)
 {
-	msg_t *m = msg_new(1);
+	msg_t *m = msg_new(1, false);
 
 	msg_header_t *mh = msg_get_header(m);
 	mh->type = MSG_L3_ROGM;
@@ -59,11 +60,13 @@ static void l3_send_rogm(addr_t addr)
 
 static void l3_send_known(void)
 {
-	for(addr_t i = 1; i <= NUM_NODES_MAX; i++)
+	nb_iter_t i;
+
+	for(i = 1; i <= NUM_NODES_MAX; i++)
 	{
 		if(layer3.nodes[i].hop)
 		{
-			msg_t *m = msg_new(1);
+			msg_t *m = msg_new(1, false);
 
 			msg_header_t *mh = msg_get_header(m);
 			mh->type = MSG_L3_KNOWN;

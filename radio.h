@@ -5,7 +5,7 @@
 #include "queue.h"
 #include "msg.h"
 
-struct Radio
+typedef struct
 {
 	bool listening;
 
@@ -14,7 +14,7 @@ struct Radio
 	addr_t last_dst_addr;
 
 	queue_head tx;
-};
+} Radio;
 
 extern Radio radio;
 

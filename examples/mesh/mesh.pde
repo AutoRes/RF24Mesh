@@ -7,12 +7,20 @@ const addr_t my_addr = 0x01;
 void setup()
 {
 	Serial.begin(57600);
-	mesh_init(my_addr, irq);
+	mesh_init(
+		my_addr,
+		irq,
+		DEFAULT_IRQ_N,
+		DEFAULT_CEPIN,
+		DEFAULT_CSPIN,
+		DEFAULT_MESH_ID
+	);
+
 }
 
 void loop()
 {
-      msg_t *m = msg_new(sizeof(uint8_t));
+      msg_t *m = msg_new(sizeof(uint8_t), false);
       msg_get_pl(m)[0] = my_addr;
       mesh_send(m, BCAST_ADDR);
 

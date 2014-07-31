@@ -22,8 +22,8 @@ static void adjust_pipes()
 	rf24_openReadingPipe(BCAST_PIPE, addr2pipe(BCAST_ADDR));
 	rf24_openReadingPipe(SELF_PIPE, addr2pipe(radio.self_addr));
 
-	rf24_setAutoAck(BCAST_PIPE, false);
-	rf24_setAutoAck(SELF_PIPE, true);
+	rf24_setAutoAckPipe(BCAST_PIPE, false);
+	rf24_setAutoAckPipe(SELF_PIPE, true);
 }
 
 static void _radio_send(void)
@@ -59,7 +59,7 @@ static void _radio_recv(void)
 	msg_t *m;
 	uint8_t pipe;
 
-	if(rf24_available(&pipe))
+	if(rf24_availablePipe(&pipe))
 	{
 		uint8_t len = rf24_getDynamicPayloadSize();
 		m = msg_new(len, true);
@@ -95,7 +95,7 @@ void radio_init(uint32_t mesh_id, addr_t self_addr)
 void radio_irq(void)
 {
 	bool tx_ok, tx_fail, rx_ready;
-	rf24_whatHappened(tx_ok, tx_fail, rx_ready);
+	rf24_whatHappened(&tx_ok, &tx_fail, &rx_ready);
 
 	if(tx_ok || tx_fail)
 	{

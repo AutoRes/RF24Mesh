@@ -8,11 +8,11 @@
 
 typedef void (*irq_t)(void);
 
-struct Mesh
+typedef struct
 {
 	irq_t app_irq;
 	queue_head rx;
-};
+} Mesh;
 
 extern Mesh mesh;
 
@@ -32,11 +32,11 @@ extern Mesh mesh;
  * ----------------------------------
  */
 void mesh_init(uint8_t self_addr,
-		irq_t app_irq = NULL,
-		uint8_t irq_n = DEFAULT_IRQ_N,
-		uint8_t cepin = DEFAULT_CEPIN,
-		uint8_t cspin = DEFAULT_CSPIN,
-		uint32_t mesh_id = DEFAULT_MESH_ID);
+		irq_t app_irq,
+		uint8_t irq_n,
+		uint8_t cepin,
+		uint8_t cspin,
+		uint32_t mesh_id);
 void mesh_tick(void);
 
 void mesh_send(msg_t *m, addr_t to);

@@ -12,7 +12,7 @@ Layer2 layer2;
 
 static void l2_send_hello(void)
 {
-	msg_t *m = msg_new(0);
+	msg_t *m = msg_new(0, false);
 
 	msg_header_t *mh = msg_get_header(m);
 	mh->type = MSG_L2_HELLO;
@@ -22,7 +22,7 @@ static void l2_send_hello(void)
 
 static void l2_send_ping(addr_t to)
 {
-	msg_t *m = msg_new(0);
+	msg_t *m = msg_new(0, false);
 
 	msg_header_t *mh = msg_get_header(m);
 	mh->type = MSG_L2_PING;
@@ -53,6 +53,8 @@ void l2_init(void)
 
 void l2_tick(void)
 {
+	nb_iter_t i;
+
 	if(layer2.hello_cnt == HELLO_TIMER_MAX)
 	{
 		l2_send_hello();
@@ -60,7 +62,7 @@ void l2_tick(void)
 	}
 	else layer2.hello_cnt++;
 
-	for(nb_iter_t i = 0; i < layer2.nb_l; i++)
+	for(i = 0; i < layer2.nb_l; i++)
 	{
 		if(layer2.nb[i].timer == NB_TIMER_MAX)
 		{
@@ -98,7 +100,7 @@ bool l2_nb_add(addr_t addr)
 	{
 		nb_iter_t i;
 
-		for(nb_iter_t i = layer2.nb_l; i >= 0; i--)
+		for(i = layer2.nb_l; i >= 0; i--)
 		{
 			if(i > 0 && layer2.nb[i-1].addr > addr)
 			{
